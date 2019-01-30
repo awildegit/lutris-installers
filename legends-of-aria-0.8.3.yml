@@ -1,0 +1,89 @@
+name: Legends of Aria
+game_slug: legends-of-aria
+version: 0.8.3
+slug: legends-of-aria
+runner: wine
+
+script:
+  files:
+  - setup:
+      filename: LegendsOfAria-0.8.3.exe
+      url: http://cdn2.legendsofaria.com/LegendsOfAria-0.8.3.exe
+  game:
+    arch: win64
+    exe: $GAMEDIR/drive_c/Program Files/Legends of Aria/Legends of Aria.exe
+    prefix: $GAMEDIR
+    working_dir: $GAMEDIR/drive_c/Program Files/Legends of Aria
+  installer:
+  - task:
+      arch: win64
+      description: 'Wine Staging: Enabling DXVA2'
+      key: backend
+      name: set_regedit
+      path: HKEY_CURRENT_USER\Software\Wine\DXVA2
+      prefix: $GAMEDIR
+      value: va
+  - task:
+      app: corefonts
+      description: 'Winetricks: Corefonts'
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: d3drm
+      description: 'Winetricks: d3drm'
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: d3dx10
+      description: 'Winetricks: d3dx10'
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: vulkanrt
+      description: 'Winetricks: vulkanrt'
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: dxvk65
+      description: 'Winetricks: dxvk65'
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      description: 'Installing Legends of Aria'
+      executable: setup
+      name: wineexec
+      prefix: $GAMEDIR
+      arch: win64
+  - task:
+      app: vcrun2008 vcrun2013 physx corefonts
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: dotnet472 win7
+      description: Installing .NET 4.7.2
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      arch: win64
+      description: Setting Windows 10 mode for Wine
+      key: Version
+      name: set_regedit
+      path: HKEY_CURRENT_USER\Software\Wine
+      prefix: $GAMEDIR
+      value: win10
+  system:
+      env:
+        DXVK_HUD: '0'
+        DXVK_STATE_CACHE: '1'
+        DXVK_STATE_CACHE_PATH: $GAMEDIR
+        WINEESYNC: '1'
+        __GL_SHADER_DISK_CACHE: '1'
+        __GL_SHADER_DISK_CACHE_PATH: $GAMEDIR
+        __GL_SHADER_DISK_CACHE_SKIP_CLEANUP: '1'
+        __GL_THREADED_OPTIMIZATIONS: '1'
+        mesa_glthread: 'true'
+  wine:
+    dxvk: true
+    dxvk_version: 0.96
+    esync: true
+    version: esync-staging-pba-3.18-x86_64
